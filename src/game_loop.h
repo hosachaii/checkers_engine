@@ -1,0 +1,12 @@
+unsigned short get_index(void);
+unsigned short interpreter(unsigned short col, unsigned short row);
+bool forward_moving_pieces(uint32_t player_pieces, uint32_t opp_pieces, uint32_t empty_squares);
+bool reverse_moving_pieces(uint32_t player_pieces, uint32_t opp_pieces, uint32_t empty_squares);
+unsigned short is_game_over(bitboard_t *bitboard);
+void get_move(board_t *board, unsigned short *from_index, unsigned short *to_index, fj_array *fj, player_t player);
+void switch_player(player_t *player);
+unsigned short move_action(board_t *board, game_history *history, fj_array *fj, player_t *current_player);
+void clear_screen();
+void print_player(player_t player);
+void inform_fj(fj_array *fj);
+void two_player(void);
