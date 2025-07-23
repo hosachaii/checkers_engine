@@ -21,28 +21,17 @@ typedef enum {
 	PLAYER_2 //=2
 }player_t;
 
-//state of single square on board
-typedef struct square_profile {
-	player_t player; //which player has occupied the square (i.e. empty or PLAYER_1 or PLAYER_2)
-	bool king; //if true, then king present
-}square_profile;
-
-//representation of board
-typedef struct board_t {
-	struct square_profile *squares; //pointer to 1d array of square_profile structures
-}board_t;
-
 //bitboard representation of the game
-typedef struct bitboard_t {
+typedef struct board_t {
 	uint32_t player1_pawns; //32 bit unsigned int representing positions of PLAYER_1 pawns
 	uint32_t player1_kings; //32 bit unsigned int representing positions of PLAYER_1 kings
 	uint32_t player2_pawns; //32 bit unsigned int representing positions of PLAYER_2 pawns
 	uint32_t player2_kings; //32 bit unsigned int representing positions of PLAYER_2 kings
-}bitboard_t;
+}board_t;
 
 // stack node structure for storing board states.
 typedef struct board_state {
-    bitboard_t bitboard; //captures all the player positions
+    board_t board; //captures all the player positions
     player_t player_turn; //which player's turn
     struct board_state *next; //pointer to next board_state in a linked list
 }board_state;
@@ -74,13 +63,3 @@ typedef enum {
 
 void init_board(board_t *board, game_history *history);
 void display_board(board_t *board);
-bitboard_t arr_to_bitboard(board_t *board);
-void bitboard_to_arr(bitboard_t *bitboard, board_t *board);
-void init_board_state(board_state *bs);
-void free_redo(game_history *history);
-void save_progress(bitboard_t *bitboard, game_history *history, player_t current_player);
-bool is_undo_empty(game_history *history);
-bool is_redo_empty(game_history *history);
-bool undo_action(board_t *board, game_history *history, fj_array *fj, player_t *current_player);
-bool redo_action(board_t *board, game_history *history, fj_array *fj, player_t *current_player);
-void funeral(board_t *board, game_history *history, fj_array *fj, unsigned short game_state);
