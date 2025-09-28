@@ -18,7 +18,6 @@ void init_board(board_t *board, game_history *history) {
 	board -> player2_pawns = P2_PAWNS; // P2_PAWNS is a macro which contains the bit-positions of player1_pawns.
 	board -> player1_kings = 0; // No kings at the start.
 	board -> player2_kings = 0; // No kings at the start.
-	return;
 	
 	//Initialize game history stacks.
 	history -> undo_top = NULL;
@@ -35,7 +34,7 @@ void display_board(board_t *board) {
       // row labels from 1 to 8
     	printf("%d |", row);
       	for (short col = 1; col <= 8; col++) {
-			i = interpreter(row, col);
+			i = interpreter(col, row);
 			// If bit at position i is set high in player1_pawns:
         	if (board -> player1_pawns & (1 << i))
 				printf(" X |");
@@ -233,12 +232,12 @@ bool is_valid_move(board_t *b, player_t player, unsigned short from_index, unsig
 	uint32_t opp_pieces = player == PLAYER_2 ? b -> player1_pawns | b -> player1_kings : b -> player2_pawns | b -> player2_kings;
 
 	// Checking if player has chosen their own pieces.
-	if(!player_pieces & (1 << from_index)) {
+	if(!(player_pieces & (1 << from_index))) {
 		return FALSE;
 	}
 
 	// checking if the destination square is empty
-	if (player_pieces | opp_pieces & (1 << to_index)) {
+	if ((player_pieces | opp_pieces) & (1 << to_index)) {
         return FALSE;
     }
 
@@ -272,7 +271,7 @@ bool is_valid_move(board_t *b, player_t player, unsigned short from_index, unsig
 // Generate bitboard after movement
 void move_piece(board_t *b, unsigned short from_index, unsigned short to_index, fj_array *fj, player_t player) {
 	*b = generate_bitboard(*b, from_index, to_index, player);
-	if(fj -> index != 1) {
+	if(fj -> index != -1) {
 		uint32_t *capture_pieces;
 		int capture_index = fj -> jumps[fj -> index].capture_index;
 		if(player == PLAYER_1) {
@@ -554,7 +553,7 @@ void are_forced_jumps(board_t *b, fj_array *fj, player_t player) {
 		find_reverse_fj(player_pieces, opp_pieces, empty_squares, fj);
 		
 		// If Player 2 has kings, check forced jumps for them as well.
-		if(b -> player1_kings)
+		if(b -> player2_kings)
 			find_forward_fj(b -> player2_kings, opp_pieces, empty_squares, fj);
 	}
 	return;
@@ -965,7 +964,7 @@ board_t generate_bitboard(board_t b, unsigned short from_index, unsigned short t
 		if(b.player2_pawns & 1U << from_index) {
 			from_pieces = &(b.player2_pawns);
 			// Check for king promotions
-			to_pieces = to_index < 4 ? &(b.player1_kings) : from_pieces;
+			to_pieces = to_index < 4 ? &(b.player2_kings) : from_pieces;
 		}
 		else {
 			from_pieces = &(b.player2_kings);
@@ -1161,4 +1160,5 @@ void checkers(void) {
 int main(void) {
 	checkers();
 	return 0;
+
 }
