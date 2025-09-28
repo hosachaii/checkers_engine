@@ -1,3 +1,5 @@
+#include "move_generation.h"
+
 // Initialize the move_table.
 void init_mt(move_table *mt) {
 	mt -> children = (board_t *)malloc(sizeof(board_t) * MT_MAX_SIZE);
@@ -13,6 +15,37 @@ void expand_mt_if_full(move_table *mt) {
 		mt -> children = (board_t *)realloc(mt -> children, sizeof(board_t) * mt -> capacity);
 	}
 	return;
+}
+
+board_t generate_bitboard(board_t b, unsigned short from_index, unsigned short to_index, player_t player) {
+	uint32_t *from_pieces, *to_pieces;
+
+	if(player == PLAYER_1) {
+		if(b.player1_pawns & 1U << from_index) {
+			from_pieces = &(b.player1_pawns);
+			// Check for king promotions
+			to_pieces = to_index > 27 ? &(b.player1_kings) : from_pieces;
+		}
+		else {
+			from_pieces = &(b.player1_kings);
+			to_pieces = from_pieces;
+		}
+	}
+	else {
+		if(b.player2_pawns & 1U << from_index) {
+			from_pieces = &(b.player2_pawns);
+			// Check for king promotions
+			to_pieces = to_index < 4 ? &(b.player1_kings) : from_pieces;
+		}
+		else {
+			from_pieces = &(b.player2_kings);
+			to_pieces = from_pieces;
+		}
+	}
+
+	*to_pieces |= 1U << to_index;
+	*from_pieces &= ~(1U << from_index);
+	return b;
 }
 
 // Generate all legal moves for a given board configuration.

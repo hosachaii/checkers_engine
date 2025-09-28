@@ -1,3 +1,5 @@
+#include "board.h"
+
 void init_board(board_t *board, game_history *history) {
 	
 	//Initialise checkers board to the start configuration.
@@ -15,20 +17,20 @@ void init_board(board_t *board, game_history *history) {
 
 // Function used to display the board (visual representation) 
 void display_board(board_t *board) {
-	short interpreter;
+	short i;
 	printf("  +---+---+---+---+---+---+---+---+\n");
     // Iterate over all square indices.
 	for (short row = 8; row >= 1; row--) {
       // row labels from 1 to 8
     	printf("%d |", row);
       	for (short col = 1; col <= 8; col++) {
-			index = interpreter(row, col)
+			i = interpreter(row, col);
 			// If bit at position i is set high in player1_pawns:
         	if (board -> player1_pawns & (1 << i))
-				printf("X |");
+				printf(" X |");
         	// If bit at position i is set high in player2_pawns:
         	else if (board -> player2_pawns & (1 << i))
-				printf("O |");
+				printf(" O |");
         	// If bit at position i is set high in player1_kings:
         	else if (board -> player1_kings & (1 << i))
 				printf("KX |");

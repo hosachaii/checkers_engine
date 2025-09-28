@@ -1,3 +1,5 @@
+#include "undo_redo.h"
+
 // Initialize board_state for undo-redo stack.
 void init_board_state(board_state *bs) {
 	bs -> next = NULL;
@@ -25,7 +27,7 @@ void save_progress(board_t *board, game_history *history, player_t current_playe
 
     // Initialize and configure board state.
     init_board_state(current_board);
-    current_board -> bitboard = *board;
+    current_board -> board = *board;
     current_board -> player_turn = current_player;
 
     // Purge redo stack.
@@ -56,7 +58,7 @@ bool undo_action(board_t *board, game_history *history, fj_array *fj, player_t *
 	
 	// Set board corresponding to undo_top.
 	p = history -> undo_top;
-	*board = p -> bitboard;
+	*board = p -> board;
 
 	// Update fj with possible forced jumps.
 	are_forced_jumps(board, fj, *current_player);
@@ -77,7 +79,7 @@ bool redo_action(board_t *board, game_history *history, fj_array *fj, player_t *
 		history -> undo_top = p;
 		
 		// Set board corresponding to undo_top.
-		*board = p -> bitboard;
+		*board = p -> board;
 		
 		// If current board state is the latest board state
 		if(is_redo_empty(history)) {

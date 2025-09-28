@@ -1,3 +1,15 @@
+#include "core_logic.h"
+
+// To calculate 0-7 row of a square from 32 based indexing.
+unsigned short get_row(unsigned short index) {
+	return index / 4;
+}
+
+// To calculate 0-7 column of a square from 32 based indexing.
+unsigned short get_col(unsigned short index) {
+	return (index / 4) % 2 ? (index % 4) * 2 + 1 : (index % 4) * 2;
+}
+
 unsigned short interpreter(unsigned short col, unsigned short row) {
 	if(row % 2 == col % 2)
 		return row % 2 ? (((row - 1) * 4) + (col / 2)) : (((row - 1) * 4) + (col / 2) - 1);
@@ -24,8 +36,8 @@ bool is_valid_move(board_t *b, player_t player, unsigned short from_index, unsig
     	return FALSE;
     }
 	
-	player_pieces = player == PLAYER_1 ? b -> player1_pawns | b -> player1_kings : b -> player2_pawns | b -> player2_kings;
-	opp_pieces = player == PLAYER_2 ? b -> player1_pawns | b -> player1_kings : b -> player2_pawns | b -> player2_kings;
+	uint32_t player_pieces = player == PLAYER_1 ? b -> player1_pawns | b -> player1_kings : b -> player2_pawns | b -> player2_kings;
+	uint32_t opp_pieces = player == PLAYER_2 ? b -> player1_pawns | b -> player1_kings : b -> player2_pawns | b -> player2_kings;
 
 	// Checking if player has chosen their own pieces.
 	if(!player_pieces & (1 << from_index)) {
@@ -65,35 +77,25 @@ bool is_valid_move(board_t *b, player_t player, unsigned short from_index, unsig
 }
 
 // Generate bitboard after movement
-board_t generate_bitboard(board_t b, unsigned short from_index, unsigned short to_index, player_t player) {
-	uint32_t *from_pieces, *to_pieces;
-	
-	if(player == PLAYER_1) {
-		if(b.player1_pawns & 1U << from_index) {
-			from_pieces = &(b.player1_pawns);
-			// Check for king promotions
-			to_pieces = to_index > 27 ? &(b.player1_kings) : from_pieces;
+void move_piece(board_t *b, unsigned short from_index, unsigned short to_index, fj_array *fj, player_t player) {
+	*b = generate_bitboard(*b, from_index, to_index, player);
+	if(fj -> index != 1) {
+		uint32_t *capture_pieces;
+		int capture_index = fj -> jumps[fj -> index].capture_index;
+		if(player == PLAYER_1) {
+			if(b -> player2_pawns & 1U << capture_index)
+				capture_pieces = &(b -> player2_pawns);
+			else
+				capture_pieces = &(b -> player2_kings);
 		}
 		else {
-			from_pieces = &(b.player1_kings);
-			to_pieces = from_pieces;
+			if(b -> player1_pawns & 1U << capture_index)
+				capture_pieces = &(b -> player1_pawns);
+			else
+				capture_pieces = &(b -> player1_kings);
 		}
+		*capture_pieces &= ~(1U << capture_index);
 	}
-	else {
-		if(b.player2_pawns & 1U << from_index) {
-			from_pieces = &(b.player2_pawns);
-			// Check for king promotions
-			to_pieces = to_index < 4 ? &(b.player1_kings) : from_pieces;
-		}
-		else {
-			from_pieces = &(b.player2_kings);
-			to_pieces = from_pieces;
-		}
-	}
-
-	*to_pieces |= 1U << to_index;
-	*from_pieces &= ~(1U << from_index);
-	return b;
 }
 
 // For pieces able move to from 1st row towards the 8th row.
@@ -186,7 +188,7 @@ unsigned short move_action(board_t *board, game_history *history, fj_array *fj, 
 			return from_index;
 		}
 		// move the desired piece.
-		board = generate_bitboard(*board, from_index, to_index, fj);
+		*board = generate_bitboard(*board, from_index, to_index, *current_player);
 		
 		// Update the game_history stacks.
 		save_progress(board, history, *current_player);

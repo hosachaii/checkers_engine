@@ -1,3 +1,13 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdint.h>
+#include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+#include "minimax.h"
+
 // Static evaluation function
 short evaluate_board(board_t *b, player_t player, unsigned short game_result) {
 	// If game over, return following scores:
@@ -27,7 +37,7 @@ short evaluate_board(board_t *b, player_t player, unsigned short game_result) {
 }
 
 short minimax(board_t *b, unsigned short depth, short alpha, short beta, player_t player, board_t *best_move) {
-	unsigned short game_status = is_game_over(b);
+	unsigned short game_status = is_game_over(b, player);
 	if(depth == 0 || game_status)
 		return evaluate_board(b, player, game_status);
 

@@ -1,3 +1,5 @@
+#include "forced_jumps.h"
+
 // Check if the forced jump array is empty.
 bool is_fj_empty(fj_array *fj) {
 	if(fj -> size == 0)

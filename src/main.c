@@ -1,19 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdbool.h>
-#include <ctype.h>
-#include "board.h"
-#include "undo_redo.h"
-#include "forced_jumps.h"
-#include "core_logic.h"
-#include "game_io.h"
-#include "move_generation.h"
-#include "minimax.h"
-#include "game_modes.h"
-
 // Facilitate Gameplay
 void checkers(void) {
 	int choice;

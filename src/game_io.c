@@ -1,3 +1,5 @@
+#include "game_io.h"
+
 // Scrolls to a fresh terminal window.
 void clear_screen() {
     printf("\033[2J");

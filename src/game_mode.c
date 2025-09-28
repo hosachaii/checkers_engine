@@ -1,3 +1,5 @@
+#include "game_mode.h"
+
 // Global variable to set game_mode
 game_mode_t game_mode;
 
@@ -52,9 +54,9 @@ unsigned short human_move(board_t *board, game_history *history, fj_array *fj, p
 			return from_index;
 		}
 
-		board = generate_bitboard(board, from_index, to_index, fj);
+		*board = generate_bitboard(*board, from_index, to_index, *current_player);
 
-		game_status = is_game_over(board);
+		game_status = is_game_over(board, *current_player);
 		if(game_status != 0) {
 			funeral(board, history, fj, game_status);
 			return FALSE;
@@ -114,7 +116,7 @@ void AI_player(player_t starting_player) {
 
 		if(current_player == PLAYER_2) {
 			minimax(&board, DEPTH, SHRT_MIN, SHRT_MAX, PLAYER_2, &ai_move);
-			game_status = is_game_over(&ai_move, *current_player);
+			game_status = is_game_over(&ai_move, current_player);
 			if(game_status) {
 				funeral(&board, &history, &fj, game_status);
 				break;
