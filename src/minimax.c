@@ -1,11 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdbool.h>
-#include <ctype.h>
-
 #include "minimax.h"
 
 // Static evaluation function
@@ -103,4 +95,5 @@ short minimax(board_t *b, unsigned short depth, short alpha, short beta, player_
 	free(mt.children);
 	free(fj.jumps);
     return best_score;
+
 }
