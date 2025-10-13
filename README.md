@@ -1,4 +1,4 @@
 # Checkers Engine
 A Minimax-based Checkers Engine.
 
-This project implements a checkers engine using the Minimax algorithm, facilitating both human-vs-human and human-vs-computer gameplay. It was developed as a mini-project for the Data Structures and Algorithms course at COEP Technological University.
+This project implements a checkers engine using the Minimax algorithm, capable of both human-vs-human and human-vs-computer gameplay. It was developed as a mini-project for the Data Structures and Algorithms course at COEP Technological University.
